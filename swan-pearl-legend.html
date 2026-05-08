@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Swan Pearl Legend | أسطورة البجعة واللؤلؤ</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* ثيم سمائي لؤلؤي */
+            --p-color:      #7ecfff;          /* أزرق سمائي */
+            --sky-light:    #b8e8ff;          /* سمائي فاتح */
+            --sky-deep:     #4ab3e8;          /* سمائي عميق */
+            --pearl:        #e8f4fb;          /* لون اللؤلؤ */
+            --pearl-soft:   #cce8f5;          /* لؤلؤي ناعم */
+            --s-color:      #ffffff;
+            --t-color:      #03111f;
+            --glass:        rgba(125, 205, 255, 0.04);
+            --glow:         rgba(126, 207, 255, 0.55);
+            --pearl-glow:   rgba(200, 235, 255, 0.7);
+            --pearl-shadow: 0 0 25px rgba(200,235,255,0.5);
+            /* إضافات كيوت */
+            --sky-glow:     rgba(126, 207, 255, 0.6);
+            --ice:          #d4f0ff;
+            --aqua:         #a0deff;
+            --star-color:   rgba(200, 235, 255, 0.95);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+
+        body {
+            /* خلفية سماء ليلية زرقاء */
+            background: radial-gradient(ellipse at 30% 20%, #0a2540 0%, #030e1c 60%, #010810 100%);
+            color: #fff; font-family: 'Tajawal', sans-serif;
+            overflow: hidden; height: 100vh; width: 100vw;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        #bg-canvas { position: fixed; inset: 0; z-index: -1; }
+        
+        .floating-elements {
+            position: fixed; inset: 0; pointer-events: none; z-index: 0;
+        }
+
+        .master-shield {
+            position: relative; width: 480px; height: 800px;
+            background: var(--glass); backdrop-filter: blur(50px);
+            border-radius: 150px 150px 50px 50px;
+            border: 1px solid rgba(126, 207, 255, 0.25);
+            box-shadow:
+                0 50px 150px rgba(0,0,0,0.9),
+                inset 0 0 60px rgba(126,207,255,0.05),
+                0 0 80px rgba(74,179,232,0.08);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 40px; z-index: 10;
+            /* float خفيف فقط — بدون أي تدوير أو 3D */
+            animation: masterFloat 7s ease-in-out infinite;
+            will-change: transform;
+        }
+
+        @keyframes masterFloat {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-12px); }
+        }
+
+        .swan-theatre {
+            width: 100%; height: 450px; border-radius: 120px 120px 30px 30px;
+            overflow: hidden; position: relative;
+            border: 3px solid var(--sky-deep);
+            box-shadow: 0 0 60px var(--glow), 0 0 120px rgba(74,179,232,0.2);
+            margin-bottom: 30px;
+            /* نعزل الفيديو تماماً عن أي تأثير خارجي */
+            isolation: isolate;
+            will-change: box-shadow;
+        }
+
+        /* فيديو لا يتحرك ولا يتقلب — ثابت تماماً */
+        .swan-theatre video {
+            position: absolute; inset: 0;
+            width: 100%; height: 100%; object-fit: cover;
+            filter: contrast(1.1) brightness(0.85);
+            /* opacity فقط للـ crossfade — بدون transform أو rotate */
+            transition: opacity 0.9s ease;
+            transform: none !important;
+        }
+
+        #vid  { z-index: 2; opacity: 1; }
+        #vid2 { z-index: 1; opacity: 0; }
+
+        /* hover على الإطار فقط — لا شي على الفيديو */
+        .swan-theatre:hover {
+            box-shadow: 0 0 90px var(--pearl-glow), 0 0 160px rgba(126,207,255,0.35);
+        }
+
+        .narrative-unit { text-align: center; height: 150px; margin-top: 20px; }
+        
+        .main-message {
+            font-size: 1.4rem; font-weight: 800; color: var(--sky-light);
+            text-shadow: 0 0 15px var(--glow); line-height: 1.8;
+            opacity: 0; transform: translateY(20px);
+        }
+
+        .date-shimmer {
+            font-family: 'Dancing Script', cursive; font-size: 3.5rem;
+            background: linear-gradient(45deg, var(--pearl), var(--p-color), #fff, var(--sky-deep));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px var(--glow)); margin-top: 15px;
+        }
+
+        .pearl-btn {
+            position: relative; padding: 22px 65px; border-radius: 60px;
+            /* زر بلون لؤلؤي سمائي */
+            background: linear-gradient(135deg, var(--pearl) 0%, #c8e8f8 50%, var(--pearl-soft) 100%);
+            color: var(--t-color); font-weight: 900;
+            border: none; font-size: 1.3rem; overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(126,207,255,0.3);
+            transition: 0.4s; margin-top: auto;
+        }
+
+        .pearl-btn::before {
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(126,207,255,0.6), transparent);
+            transform: translateX(-100%); transition: 0.6s;
+        }
+
+        .pearl-btn:hover::before { transform: translateX(100%); }
+        .pearl-btn:active { transform: scale(0.9); }
+
+        #magic-cursor {
+            position: fixed; width: 30px; height: 30px;
+            background: var(--pearl); border-radius: 50%; pointer-events: none;
+            z-index: 10000; mix-blend-mode: difference;
+            box-shadow: 0 0 20px var(--p-color); transition: transform 0.1s;
+        }
+
+        .feather-particle {
+            position: absolute; pointer-events: none;
+            font-size: 20px; filter: blur(1px); z-index: 5;
+        }
+
+        .finale {
+            position: fixed; inset: 0;
+            background: radial-gradient(ellipse at center, #0a2540 0%, #010810 100%);
+            z-index: 2000;
+            display: none; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center;
+        }
+
+        /* =============================================
+           ✨ إضافات كيوت — ثيم سمائي لؤلؤي
+           ============================================= */
+
+        #cute-loader {
+            position: fixed; inset: 0; z-index: 99999;
+            background: radial-gradient(ellipse at center, #0a2540, #010810);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center; gap: 20px;
+        }
+
+        .loader-swan {
+            font-size: 5rem;
+            animation: swanBounce 0.8s ease-in-out infinite alternate;
+            filter: drop-shadow(0 0 20px var(--glow));
+        }
+
+        @keyframes swanBounce {
+            from { transform: translateY(0) scale(1); }
+            to   { transform: translateY(-20px) scale(1.1); }
+        }
+
+        .loader-dots { display: flex; gap: 10px; }
+
+        .loader-dots span {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--p-color);
+            animation: dotPulse 1s ease-in-out infinite;
+        }
+
+        .loader-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loader-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes dotPulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50%       { transform: scale(1.5); opacity: 1; }
+        }
+
+        .loader-text {
+            color: var(--sky-light); font-size: 1rem; opacity: 0.7;
+            letter-spacing: 3px; animation: loaderFade 2s ease-in-out infinite;
+        }
+
+        @keyframes loaderFade {
+            0%, 100% { opacity: 0.4; } 50% { opacity: 1; }
+        }
+
+        /* نجوم متلألئة لؤلؤية */
+        .twinkling-star {
+            position: fixed; border-radius: 50%;
+            pointer-events: none; z-index: 0;
+            animation: twinkle var(--dur, 3s) ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.08; transform: scale(1); }
+            50%       { opacity: 1;    transform: scale(1.6); }
+        }
+
+        /* فقاعات سمائية طائرة */
+        .bg-heart {
+            position: fixed; pointer-events: none; z-index: 1;
+            font-size: var(--sz, 18px);
+            animation: heartRise var(--dur, 8s) ease-in infinite;
+            opacity: 0;
+        }
+
+        @keyframes heartRise {
+            0%   { transform: translateY(100vh) rotate(0deg);   opacity: 0; }
+            10%  { opacity: 0.5; }
+            90%  { opacity: 0.25; }
+            100% { transform: translateY(-10vh) rotate(15deg);  opacity: 0; }
+        }
+
+        /* دوائر مدارية سمائية */
+        .card-sparkle {
+            position: absolute; pointer-events: none;
+            width: 7px; height: 7px; border-radius: 50%;
+            background: var(--p-color);
+            box-shadow: 0 0 10px var(--p-color);
+            animation: orbitCard var(--dur, 4s) linear infinite;
+            z-index: 20;
+        }
+
+        @keyframes orbitCard {
+            0%   { transform: rotate(0deg)   translateX(260px) rotate(0deg)   scale(1);   opacity: 1; }
+            50%  { transform: rotate(180deg) translateX(260px) rotate(-180deg) scale(0.4); opacity: 0.4; }
+            100% { transform: rotate(360deg) translateX(260px) rotate(-360deg) scale(1);   opacity: 1; }
+        }
+
+        /* ربون */
+        .top-ribbon {
+            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+            font-size: 2.2rem; z-index: 30;
+            animation: ribbonBounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px var(--sky-glow));
+        }
+
+        @keyframes ribbonBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0)   rotate(-5deg); }
+            50%       { transform: translateX(-50%) translateY(-8px) rotate(5deg); }
+        }
+
+        /* مؤشر التقدم */
+        .progress-bar-wrap {
+            position: absolute; bottom: 28px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; gap: 8px; z-index: 20;
+        }
+
+        .progress-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: rgba(126,207,255,0.15);
+            border: 1px solid rgba(126,207,255,0.4);
+            transition: all 0.4s ease;
+        }
+
+        .progress-dot.active {
+            background: var(--p-color);
+            box-shadow: 0 0 10px var(--p-color);
+            transform: scale(1.3);
+        }
+
+        /* حلقة سمائية لؤلؤية حول الفيديو */
+        .rainbow-ring {
+            position: absolute; inset: -4px; border-radius: inherit;
+            background: conic-gradient(
+                from 0deg,
+                var(--pearl), var(--p-color), var(--sky-deep),
+                #fff,         var(--aqua),   var(--pearl-soft),
+                var(--pearl)
+            );
+            z-index: -1; opacity: 0.55;
+            animation: rainbowSpin 5s linear infinite;
+        }
+
+        @keyframes rainbowSpin { to { transform: rotate(360deg); } }
+
+        /* بطاقة رسالة سمائية */
+        .love-toast {
+            position: fixed; top: 40px; left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: rgba(126, 207, 255, 0.12);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(126, 207, 255, 0.45);
+            border-radius: 50px; padding: 12px 30px;
+            font-size: 1rem; color: var(--sky-light);
+            font-weight: 700; z-index: 9000;
+            box-shadow: 0 0 30px var(--sky-glow);
+            pointer-events: none; white-space: nowrap;
+        }
+
+        /* زر مع أيقونات دوارة */
+        .btn-orbit-wrap {
+            position: relative; display: inline-block; margin-top: auto;
+        }
+
+        .btn-orbiter {
+            position: absolute; font-size: 1rem; pointer-events: none;
+            animation: btnOrbit var(--dur, 3s) linear infinite;
+        }
+
+        @keyframes btnOrbit {
+            0%   { transform: rotate(0deg)   translateX(80px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+        }
+
+        /* شريط العواطف */
+        .emotion-strip {
+            position: absolute; left: -50px; top: 50%;
+            transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 14px;
+        }
+
+        .emotion-icon {
+            font-size: 1.4rem; opacity: 0.35;
+            animation: emotionPulse 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 6px var(--sky-glow));
+            transition: opacity 0.4s;
+        }
+
+        .emotion-icon:hover { opacity: 1; }
+
+        @keyframes emotionPulse {
+            0%, 100% { transform: scale(1); }
+            50%       { transform: scale(1.2); }
+        }
+
+        .emotion-strip-right {
+            position: absolute; right: -50px; top: 50%;
+            transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 14px;
+        }
+
+        /* زجاجة رسالة */
+        .message-bottle {
+            position: fixed; bottom: 20px; right: 30px;
+            font-size: 2rem; z-index: 50; cursor: none;
+            animation: bottleSway 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px var(--sky-glow));
+        }
+
+        @keyframes bottleSway {
+            0%, 100% { transform: rotate(-10deg) translateY(0); }
+            50%       { transform: rotate(10deg)  translateY(-8px); }
+        }
+
+        .sparkle-text::after {
+            content: ' ✨';
+            animation: sparkleFlash 1.5s ease-in-out infinite;
+        }
+
+        @keyframes sparkleFlash {
+            0%, 100% { opacity: 0; } 50% { opacity: 1; }
+        }
+
+        /* نقاط زوايا الفيديو */
+        .theatre-dots {
+            position: absolute; inset: 0; pointer-events: none;
+            border-radius: inherit; z-index: 3;
+            background:
+                radial-gradient(circle 4px at 10% 10%, rgba(126,207,255,0.7) 0%, transparent 100%),
+                radial-gradient(circle 3px at 90% 12%, rgba(200,235,255,0.8) 0%, transparent 100%),
+                radial-gradient(circle 4px at 88% 88%, rgba(126,207,255,0.6) 0%, transparent 100%),
+                radial-gradient(circle 3px at 12% 85%, rgba(200,235,255,0.7) 0%, transparent 100%);
+        }
+
+        /* كلمة خجولة */
+        .shy-label {
+            position: fixed; bottom: 20px; left: 30px;
+            font-size: 0.85rem; color: var(--sky-light);
+            opacity: 0.5; font-weight: 700; z-index: 50;
+            animation: shyFloat 5s ease-in-out infinite;
+        }
+
+        @keyframes shyFloat {
+            0%, 100% { transform: translateY(0);   opacity: 0.4; }
+            50%       { transform: translateY(-6px); opacity: 0.9; }
+        }
+
+        /* قلوب النهاية */
+        .finale-hearts-bg {
+            position: absolute; inset: 0; overflow: hidden;
+            pointer-events: none;
+        }
+
+        .finale-floating-heart {
+            position: absolute;
+            animation: finaleHeartRise 4s ease-in infinite;
+            font-size: var(--sz, 24px);
+            opacity: 0;
+        }
+
+        @keyframes finaleHeartRise {
+            0%   { transform: translateY(100%) rotate(0deg);   opacity: 0; }
+            20%  { opacity: 1; }
+            100% { transform: translateY(-20%) rotate(15deg); opacity: 0; }
+        }
+
+        /* وميض إطار الفيديو عند الانتقال (بديل عن هزة الفيديو) */
+        @keyframes theatreGlow {
+            0%   { box-shadow: 0 0 60px var(--glow), 0 0 120px rgba(74,179,232,0.2); }
+            50%  { box-shadow: 0 0 120px var(--pearl-glow), 0 0 200px rgba(126,207,255,0.5); }
+            100% { box-shadow: 0 0 60px var(--glow), 0 0 120px rgba(74,179,232,0.2); }
+        }
+
+        .theatre-flash { animation: theatreGlow 0.6s ease-out; }
+
+    </style>
+</head>
+<body>
+
+    <div id="cute-loader">
+        <div class="loader-swan">🦢</div>
+        <div class="loader-dots">
+            <span></span><span></span><span></span>
+        </div>
+        <p class="loader-text">يتهيأ لكِ العالم...</p>
+    </div>
+
+    <div id="magic-cursor"></div>
+    <div class="floating-elements" id="particles"></div>
+
+    <div class="love-toast" id="love-toast">🤍 أنتِ أجمل شيء في حياتي 🤍</div>
+    <div class="message-bottle">🫧</div>
+    <div class="shy-label">~ بجعتي الصغيرة ~</div>
+
+    <!-- الصوت لا يقطع: loop + preload -->
+    <audio id="bg-audio" loop preload="auto">
+        <source src="space_song.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="master-shield" id="main-ui">
+
+        <div class="top-ribbon">🎀</div>
+
+        <!-- دوائر مدارية سمائية -->
+        <div class="card-sparkle" style="--dur:3s;"></div>
+        <div class="card-sparkle" style="--dur:5s; background:var(--aqua); box-shadow:0 0 10px var(--aqua);"></div>
+        <div class="card-sparkle" style="--dur:7s; background:var(--pearl-soft); box-shadow:0 0 10px var(--pearl-soft);"></div>
+
+        <div class="emotion-strip">
+            <div class="emotion-icon" style="animation-delay:0s;">🌙</div>
+            <div class="emotion-icon" style="animation-delay:0.5s;">⭐</div>
+            <div class="emotion-icon" style="animation-delay:1s;">🤍</div>
+            <div class="emotion-icon" style="animation-delay:1.5s;">🫧</div>
+            <div class="emotion-icon" style="animation-delay:2s;">💎</div>
+        </div>
+
+        <div class="emotion-strip-right">
+            <div class="emotion-icon" style="animation-delay:0.3s;">🦢</div>
+            <div class="emotion-icon" style="animation-delay:0.8s;">🌊</div>
+            <div class="emotion-icon" style="animation-delay:1.3s;">💙</div>
+            <div class="emotion-icon" style="animation-delay:1.8s;">✨</div>
+            <div class="emotion-icon" style="animation-delay:2.3s;">🩵</div>
+        </div>
+
+        <div class="swan-theatre" id="theatre">
+            <div class="rainbow-ring"></div>
+            <div class="theatre-dots"></div>
+
+            <!-- فيديوان للتبديل السلس بدون قطع -->
+            <video id="vid" autoplay muted loop playsinline preload="auto">
+                <source src="mam.mp4" type="video/mp4">
+            </video>
+            <video id="vid2" muted loop playsinline preload="auto">
+                <source src="bd06a78184783b81ed86331e5dcb45ff.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <div class="narrative-unit">
+            <div class="main-message sparkle-text" id="msg">أهلاً يا لؤلؤتي المضيئة.. مستعدة للإبحار في عالمي؟</div>
+            <div id="date-box"></div>
+        </div>
+
+        <div class="btn-orbit-wrap">
+            <div class="btn-orbiter" style="--dur:4s;">🫧</div>
+            <div class="btn-orbiter" style="--dur:6s; animation-delay:-2s;">💫</div>
+            <button class="pearl-btn" id="next-btn" onclick="app.next()">دخول إلى القلب ❤️</button>
+        </div>
+
+        <div class="progress-bar-wrap" id="progress-dots"></div>
+
+    </div>
+
+    <div class="finale" id="finale-screen">
+        <div class="finale-hearts-bg" id="finale-hearts"></div>
+        <h1 style="font-size:4rem; color:var(--sky-light);">أحبكِ للأبد 🤍</h1>
+        <p style="font-size:1.5rem; opacity:0.7; color:var(--pearl);">أنتِ أجمل فصل في حكايتي</p>
+        <p style="font-size:2rem; margin-top:20px; animation:twinkle 1.5s ease-in-out infinite;">🦢 ✨ 🤍 ✨ 🦢</p>
+        <button class="pearl-btn" style="margin-top:50px;" onclick="location.reload()">إعادة الرحلة 🔄</button>
+    </div>
+
+    <script>
+        // ─── مؤشر الفأرة ───────────────────────────────────
+        const cursor = document.getElementById('magic-cursor');
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX - 15, y: e.clientY - 15, duration: 0.2 });
+            if (Math.random() > 0.9) createFeather(e.clientX, e.clientY);
+        });
+
+        // ─── جزيئات سمائية لؤلؤية ──────────────────────────
+        function createFeather(x, y) {
+            const items = ['🦢', '✨', '🤍', '🫧', '💎', '🩵', '💙'];
+            const f = document.createElement('div');
+            f.className = 'feather-particle';
+            f.innerHTML = items[Math.floor(Math.random() * items.length)];
+            f.style.left = x + 'px';
+            f.style.top  = y + 'px';
+            document.getElementById('particles').appendChild(f);
+            anime({
+                targets: f,
+                translateX: () => anime.random(-200, 200),
+                translateY: () => anime.random(-200, 200),
+                rotate:     () => anime.random(0, 360),
+                scale:    [1, 2],
+                opacity:  [1, 0],
+                duration: 2500,
+                easing:   'easeOutExpo',
+                complete: () => f.remove()
+            });
+        }
+
+        // ─── إدارة الفيديو بدون قطع ────────────────────────
+        const vid1  = document.getElementById('vid');
+        const vid2  = document.getElementById('vid2');
+        let   activeVid   = vid1;
+        let   inactiveVid = vid2;
+        let   storyVideoReady = false;
+
+        // نحمّل فيديو القصة مسبقاً ليكون جاهزاً فوراً
+        vid2.load();
+        vid2.addEventListener('canplaythrough', () => { storyVideoReady = true; }, { once: true });
+
+        function crossfadeToStory() {
+            if (activeVid === vid2) return; // تم بالفعل
+            vid2.currentTime = 0;
+            vid2.play();
+            // تلاشي سلس
+            gsap.to(vid1, { opacity: 0, duration: 0.8 });
+            gsap.to(vid2, { opacity: 1, duration: 0.8 });
+            activeVid   = vid2;
+            inactiveVid = vid1;
+        }
+
+        // وميض الإطار بدلاً من هزة الفيديو (لا يقاطع التشغيل)
+        function flashTheatre() {
+            const t = document.getElementById('theatre');
+            t.classList.remove('theatre-flash');
+            void t.offsetWidth;
+            t.classList.add('theatre-flash');
+            setTimeout(() => t.classList.remove('theatre-flash'), 700);
+        }
+
+        // ─── الصوت — يضمن الاستمرار دائماً ────────────────
+        const audio = document.getElementById('bg-audio');
+        audio.volume = 0.8;
+
+        audio.addEventListener('ended', () => audio.play());   // احتياط
+        audio.addEventListener('pause', () => {
+            // لا نوقفه إلا عند إخفاء الصفحة
+            if (!document.hidden) audio.play();
+        });
+
+        // ─── محرك القصة ────────────────────────────────────
+        const app = {
+            step: 0,
+            audioStarted: false,
+            data: [
+                { t: "في عتمة هذه الحياة، كنتِ أنتِ الضوء الهادئ كالبجعة..",           b: "أكمل القصة.." },
+                { t: "رقيقة جداً، لكنكِ قوية في قلبي كأمواج البحر الأزرق..",            b: "وماذا بعد؟" },
+                { t: "تذكرين هذا التاريخ؟ اليوم الذي أضاء فيه كوني لأول مرة..", d: "2025 / 6 / 11", b: "أجمل أيامي ❤️" },
+                { t: "سأبقى دائماً بجانبكِ، أحميكِ مثلما يحمي البحر أسرار اللؤلؤ..",  b: "إلى الأبد؟" },
+                { t: "نعم، إلى الأبد.. يا بجعتي الجميلة.",                              b: "أحبك كثيراً" }
+            ],
+
+            init() {
+                gsap.to("#msg", { opacity: 1, y: 0, duration: 1.5, delay: 0.5 });
+                const dots = document.getElementById('progress-dots');
+                this.data.forEach((_, i) => {
+                    const d = document.createElement('div');
+                    d.className = 'progress-dot';
+                    d.id = `dot-${i}`;
+                    dots.appendChild(d);
+                });
+            },
+
+            next() {
+                // تشغيل الصوت بضغطة المستخدم الأولى
+                if (!this.audioStarted) {
+                    audio.play().catch(() => {});
+                    this.audioStarted = true;
+                }
+
+                if (this.step >= this.data.length) { this.endGame(); return; }
+
+                const current = this.data[this.step];
+                const msgEl  = document.getElementById('msg');
+                const dateBox = document.getElementById('date-box');
+                const btn    = document.getElementById('next-btn');
+
+                // في الخطوة الأولى نتحول للفيديو المشترك بشكل سلس
+                if (this.step === 0) crossfadeToStory();
+
+                showLoveToast();
+                flashTheatre();
+
+                document.querySelectorAll('.progress-dot').forEach(d => d.classList.remove('active'));
+                const dot = document.getElementById(`dot-${this.step}`);
+                if (dot) dot.classList.add('active');
+
+                gsap.to([msgEl, dateBox], {
+                    opacity: 0, y: -20, duration: 0.5,
+                    onComplete: () => {
+                        msgEl.innerHTML  = current.t;
+                        dateBox.innerHTML = current.d
+                            ? `<div class="date-shimmer">${current.d}</div>` : '';
+                        btn.innerText = current.b;
+                        gsap.to([msgEl, dateBox], { opacity: 1, y: 0, duration: 0.8, ease: "back.out" });
+                    }
+                });
+
+                this.step++;
+            },
+
+            endGame() {
+                gsap.to("#main-ui", { duration: 1.5, y: -1000, opacity: 0, ease: "power4.in" });
+                setTimeout(() => {
+                    const final = document.getElementById('finale-screen');
+                    final.style.display = "flex";
+                    gsap.from(final, { opacity: 0, duration: 2 });
+                    this.fireworks();
+                    spawnFinaleHearts();
+                }, 1000);
+            },
+
+            fireworks() {
+                setInterval(() => {
+                    createFeather(
+                        window.innerWidth  / 2 + (Math.random() - 0.5) * 500,
+                        window.innerHeight / 2 + (Math.random() - 0.5) * 500
+                    );
+                }, 100);
+            }
+        };
+
+        // ─── شاشة التحميل ───────────────────────────────────
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('cute-loader');
+                gsap.to(loader, {
+                    opacity: 0, duration: 1, ease: "power2.inOut",
+                    onComplete: () => { loader.style.display = 'none'; app.init(); }
+                });
+            }, 1800);
+        });
+
+        // ─── نجوم لؤلؤية في الخلفية ────────────────────────
+        function spawnStars() {
+            const colors = ['#fff', '#b8e8ff', '#7ecfff', '#e8f4fb', '#cce8f5'];
+            for (let i = 0; i < 90; i++) {
+                const star = document.createElement('div');
+                star.className = 'twinkling-star';
+                const size = Math.random() * 3 + 1;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                star.style.cssText = `
+                    width:${size}px; height:${size}px;
+                    left:${Math.random()*100}vw; top:${Math.random()*100}vh;
+                    background:${color};
+                    box-shadow:0 0 ${size*3}px ${color};
+                    --dur:${Math.random()*4+2}s;
+                    animation-delay:${Math.random()*6}s;
+                `;
+                document.body.appendChild(star);
+            }
+        }
+
+        // ─── فقاعات سمائية طائرة ────────────────────────────
+        function spawnBgHearts() {
+            const items = ['🤍', '💙', '🩵', '💫', '🫧', '✨', '💎'];
+            setInterval(() => {
+                const h = document.createElement('div');
+                h.className = 'bg-heart';
+                h.innerHTML = items[Math.floor(Math.random() * items.length)];
+                h.style.cssText = `
+                    left:${Math.random()*100}vw; bottom:-50px;
+                    --sz:${Math.random()*16+10}px;
+                    --dur:${Math.random()*6+6}s;
+                    animation-delay:${Math.random()*2}s;
+                `;
+                document.body.appendChild(h);
+                setTimeout(() => h.remove(), 14000);
+            }, 1200);
+        }
+
+        // ─── رسالة حب طائرة ────────────────────────────────
+        function showLoveToast() {
+            const messages = [
+                '🤍 أنتِ أجمل شيء في حياتي 🤍',
+                '🦢 بجعتي الجميلة 🦢',
+                '✨ اشتقت لكِ 💙',
+                '🩵 أنتِ سمائي 🩵',
+                '💎 أنتِ لؤلؤتي 💎'
+            ];
+            const toast = document.getElementById('love-toast');
+            toast.textContent = messages[Math.floor(Math.random() * messages.length)];
+            gsap.fromTo(toast,
+                { y: -120, opacity: 0 },
+                {
+                    y: 0, opacity: 1, duration: 0.6, ease: "back.out(1.7)",
+                    onComplete: () => gsap.to(toast, { y: -120, opacity: 0, duration: 0.5, delay: 2 })
+                }
+            );
+        }
+
+        // ─── قلوب شاشة النهاية ──────────────────────────────
+        function spawnFinaleHearts() {
+            const container = document.getElementById('finale-hearts');
+            const emojis = ['🤍', '💙', '🦢', '✨', '🩵', '💎', '🫧', '⭐', '💫'];
+            setInterval(() => {
+                const el = document.createElement('div');
+                el.className = 'finale-floating-heart';
+                el.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                el.style.cssText = `
+                    left:${Math.random()*100}%; bottom:0;
+                    --sz:${Math.random()*20+14}px;
+                    animation-duration:${Math.random()*3+3}s;
+                    animation-delay:${Math.random()}s;
+                `;
+                container.appendChild(el);
+                setTimeout(() => el.remove(), 7000);
+            }, 300);
+        }
+
+        spawnStars();
+        spawnBgHearts();
+
+        for (let i = 0; i < 100; i++) {
+            const calc = Math.sin(i) * Math.cos(i);
+        }
+    </script>
+</body>
+</html>
