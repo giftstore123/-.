@@ -13,7 +13,7 @@
         :root {
             --p-color: #a2d2ff; 
             --glow: rgba(162, 210, 255, 0.4);
-            --glass: rgba(255, 255, 255, 0.08);
+            --glass: rgba(255, 255, 255, 0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
@@ -24,179 +24,173 @@
             color: #fff; font-family: 'Tajawal', sans-serif;
             overflow: hidden; height: 100vh; width: 100vw;
             display: flex; justify-content: center; align-items: center;
-            touch-action: none;
         }
 
-        /* الصور المبعثرة القريبة من المركز */
-        #side-elements-container {
-            position: absolute; width: 100%; height: 100%;
-            z-index: 5; pointer-events: none;
+        /* شاشة التحميل الذكية */
+        #loader {
+            position: fixed; inset: 0; background: #020617; z-index: 10000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 1s ease;
+        }
+        .loader-circle {
+            width: 60px; height: 60px; border: 4px solid var(--glass);
+            border-top-color: var(--p-color); border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* حاوية الصور الملتصقة بالفيديو */
+        .elements-wrapper {
+            position: relative; width: 450px; height: 750px;
+            display: flex; justify-content: center; align-items: center;
         }
 
         .mini-frame {
-            position: absolute; width: 95px; height: 95px;
-            border-radius: 20px; overflow: hidden;
+            position: absolute; width: 85px; height: 85px;
+            border-radius: 18px; overflow: hidden;
             border: 2px solid var(--p-color);
             box-shadow: 0 0 15px var(--glow);
-            opacity: 0.8; will-change: transform;
+            z-index: 15; opacity: 0.9;
         }
         .mini-frame img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* الحاوية الرئيسية */
+        /* الحاوية الرئيسية (أكبر الآن) */
         .master-shield {
-            position: relative; width: 400px; height: 680px;
-            background: var(--glass); backdrop-filter: blur(25px);
-            border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 30px 80px rgba(0,0,0,0.7);
+            position: relative; width: 440px; height: 720px;
+            background: var(--glass); backdrop-filter: blur(30px);
+            border-radius: 60px; border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
             display: flex; flex-direction: column; align-items: center;
-            padding: 30px; z-index: 10;
+            padding: 35px; z-index: 10;
         }
 
+        /* الفيديو - حجم أكبر */
         .swan-theatre {
-            width: 280px; height: 280px;
-            border-radius: 40px;
-            overflow: hidden; border: 3px solid var(--p-color);
-            box-shadow: 0 0 40px var(--glow);
-            margin-bottom: 20px;
+            width: 340px; height: 340px;
+            border-radius: 50px; overflow: hidden;
+            border: 4px solid var(--p-color);
+            box-shadow: 0 0 50px var(--glow);
+            margin-bottom: 25px; background: #000;
         }
-        /* الفيديو - التأكد من الخصائص اللازمة للعمل المستمر */
-        .swan-theatre video { 
-            width: 100%; height: 100%; object-fit: cover; 
-            pointer-events: none;
-        }
+        .swan-theatre video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* مشغل الموسيقى */
-        .music-player {
-            width: 100%; background: rgba(255,255,255,0.1);
-            padding: 12px; border-radius: 20px;
-            display: flex; align-items: center; gap: 12px;
-            margin-top: 15px; border: 1px solid rgba(255,255,255,0.05);
-        }
-        .play-pause-btn {
-            width: 40px; height: 40px; border-radius: 50%;
-            background: #fff; border: none; font-size: 18px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        /* نصوص الحوار */
-        .narrative-unit { 
-            text-align: center; margin-top: 15px; flex: 1; 
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        .main-message { 
-            font-size: 1.2rem; color: var(--p-color); 
-            line-height: 1.6; min-height: 3.5em;
-        }
-        .main-message::after {
-            content: '|'; animation: blink 0.8s infinite; margin-right: 5px;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
-
-        .date-shimmer { 
-            font-family: 'Dancing Script', cursive; font-size: 2.8rem; 
-            margin-top: 10px; color: #fff; text-shadow: 0 0 10px var(--glow);
-        }
-
+        /* النصوص والزر */
+        .narrative-unit { text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .main-message { font-size: 1.3rem; color: var(--p-color); line-height: 1.6; min-height: 3.5em; }
+        .date-shimmer { font-family: 'Dancing Script', cursive; font-size: 3rem; margin-top: 10px; }
         .pearl-btn {
-            padding: 18px 45px; border-radius: 30px;
+            padding: 20px 60px; border-radius: 35px;
             background: #fff; color: #000; font-weight: 800;
-            border: none; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-top: 20px;
+            border: none; cursor: pointer; font-size: 1.1rem;
         }
 
-        .touch-particle { position: absolute; pointer-events: none; font-size: 32px; z-index: 1000; }
+        /* إيموجيات اللمس - أصغر وأخف */
+        .touch-particle { position: absolute; pointer-events: none; font-size: 20px; z-index: 2000; }
     </style>
 </head>
 <body>
 
-    <div id="side-elements-container"></div>
-
-    <div class="master-shield" id="main-ui">
-        <div class="swan-theatre">
-            <video id="main-vid" autoplay muted loop playsinline>
-                <source src="mam.mp4" type="video/mp4">
-            </video>
-        </div>
-
-        <div class="narrative-unit">
-            <div class="main-message" id="msg"></div>
-            <div id="date-box"></div>
-        </div>
-
-        <div class="music-player">
-            <button class="play-pause-btn" id="playBtn">▶</button>
-            <div style="flex:1">
-                <span style="font-size:0.7rem">لحن اللؤلؤ 🎵</span>
-                <div style="width:100%; height:4px; background:rgba(255,255,255,0.2); border-radius:5px; margin-top:6px; overflow:hidden;">
-                    <div id="progress" style="width:0%; height:100%; background:var(--p-color);"></div>
-                </div>
-            </div>
-        </div>
-
-        <button class="pearl-btn" id="next-btn" onclick="app.next()">ابدئي القصة ✨</button>
+    <div id="loader">
+        <div class="loader-circle"></div>
+        <p style="margin-top: 20px; color: var(--p-color); letter-spacing: 2px;">جاري تحضير الأسطورة...</p>
     </div>
 
-    <audio id="bg-audio" loop><source src="space_song.mp3" type="audio/mpeg"></audio>
+    <div class="elements-wrapper">
+        <div id="side-elements"></div>
+
+        <div class="master-shield" id="main-ui">
+            <div class="swan-theatre">
+                <video id="main-vid" autoplay muted loop playsinline preload="auto">
+                    <source src="mam.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="narrative-unit">
+                <div class="main-message" id="msg"></div>
+                <div id="date-box"></div>
+            </div>
+
+            <button class="pearl-btn" id="next-btn" onclick="app.next()">ابدئي القصة ✨</button>
+        </div>
+    </div>
+
+    <audio id="bg-audio" loop preload="auto"><source src="space_song.mp3" type="audio/mpeg"></audio>
 
     <script>
-        // --- نظام حماية الفيديو من التوقف ---
         const video = document.getElementById('main-vid');
-        
-        // محاولة تشغيل الفيديو عند أي تفاعل مع الصفحة (لضمان عمله في الهواتف)
-        document.addEventListener('touchstart', () => { if(video.paused) video.play(); }, {once: false});
-        document.addEventListener('click', () => { if(video.paused) video.play(); }, {once: false});
+        const audio = document.getElementById('bg-audio');
 
-        // مراقب ذكي يعمل كل ثانية
-        setInterval(() => {
-            if (video.paused) {
-                video.play().catch(error => {
-                    // إذا فشل التشغيل التلقائي بسبب سياسة المتصفح
-                    console.log("Video wait for interaction");
-                });
-            }
-        }, 1000);
+        // 1. نظام التحميل المسبق (Preloader)
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            // تأخير بسيط للتأكد من أن كل شيء استقر
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.remove(), 1000);
+                app.init(); // بدء الموقع
+            }, 1500);
+        });
 
-        // 1. الصور المبعثرة
-        const sideContainer = document.getElementById('side-elements-container');
+        // 2. الصوت والفيديو (تشغيل مستمر)
+        function startMedia() {
+            audio.play().catch(() => console.log("Audio needs interaction"));
+            if(video.paused) video.play();
+        }
+
+        // 3. الصور الجانبية (قريبة جداً مبعثرة حول الفيديو)
+        const sideContainer = document.getElementById('side-elements');
         const myImages = ["pic1.jpg", "pic2.jpg", "pic3.jpg", "pic4.jpg", "pic5.jpg"];
-        const positions = [{x:22,y:14}, {x:18,y:55}, {x:74,y:18}, {x:76,y:62}, {x:45,y:85}];
+        // إحداثيات نسبة إلى wrapper (حول الفيديو)
+        const positions = [
+            { top: '-20px', left: '-40px' }, { top: '220px', left: '-50px' },
+            { top: '-30px', right: '-40px' }, { top: '200px', right: '-50px' },
+            { top: '350px', left: '180px' }
+        ];
 
         positions.forEach((pos, i) => {
             const frame = document.createElement('div');
             frame.className = 'mini-frame';
-            frame.style.left = pos.x + '%'; frame.style.top = pos.y + '%';
-            frame.style.transform = `rotate(${Math.random()*20-10}deg)`;
-            frame.innerHTML = `<img src="${myImages[i]}" onerror="this.style.display='none'; this.parentNode.style.background='var(--glow)'">`;
+            Object.assign(frame.style, pos);
+            frame.style.transform = `rotate(${Math.random()*30-15}deg)`;
+            frame.innerHTML = `<img src="${myImages[i]}" onerror="this.parentNode.style.background='var(--p-color)'">`;
             sideContainer.appendChild(frame);
-            anime({ targets: frame, translateY: [-10, 10], duration: 3000+(i*400), direction: 'alternate', loop: true, easing: 'easeInOutQuad' });
+            
+            anime({
+                targets: frame,
+                translateY: [-8, 8],
+                duration: 2000 + (i*300),
+                direction: 'alternate',
+                loop: true,
+                easing: 'easeInOutSine'
+            });
         });
 
-        // 2. مشغل الموسيقى
-        const audio = document.getElementById('bg-audio');
-        const playBtn = document.getElementById('playBtn');
-        playBtn.onclick = () => {
-            if(audio.paused) { audio.play(); playBtn.innerText = "⏸"; }
-            else { audio.pause(); playBtn.innerText = "▶"; }
-        };
-        audio.ontimeupdate = () => { document.getElementById('progress').style.width = (audio.currentTime/audio.duration)*100 + "%"; };
-
-        // 3. تأثير اللمس (انفجار إيموجيات)
+        // 4. تأثير اللمس (تقليل العدد والحجم للأداء)
         function burst(x, y) {
-            const icons = ['🤍', '🦢', '✨', '🫧', '💎'];
-            for(let i=0; i<12; i++) {
+            startMedia(); // محاولة تشغيل الصوت مع كل لمسة لضمان عمله
+            const icons = ['🤍', '🦢', '✨'];
+            for(let i=0; i<6; i++) { // تقليل العدد لـ 6 فقط لمنع التعليق
                 const span = document.createElement('span');
                 span.className = 'touch-particle';
                 span.innerHTML = icons[Math.floor(Math.random()*icons.length)];
                 span.style.left = x+'px'; span.style.top = y+'px';
                 document.body.appendChild(span);
-                anime({ targets: span, translateX: anime.random(-160, 160), translateY: anime.random(-160, 160), opacity: [1, 0], scale: [0.5, 2.5], rotate: anime.random(-360, 360), duration: 1200, easing: 'easeOutExpo', complete: () => span.remove() });
+                
+                anime({
+                    targets: span,
+                    translateX: anime.random(-100, 100),
+                    translateY: anime.random(-100, 100),
+                    opacity: [1, 0],
+                    scale: [0.5, 1.2],
+                    duration: 800,
+                    easing: 'easeOutQuad',
+                    complete: () => span.remove()
+                });
             }
         }
-        window.addEventListener('mousedown', (e) => burst(e.clientX, e.clientY));
-        window.addEventListener('touchstart', (e) => burst(e.touches[0].clientX, e.touches[0].clientY));
+        window.addEventListener('click', (e) => burst(e.clientX, e.clientY));
 
-        // 4. نظام الحوار (الكتابة حرف بحرف)
+        // 5. نظام الحوار
         const app = {
             step: 0,
             isTyping: false,
@@ -208,36 +202,33 @@
                 { t: "سأبقى دائماً بجانبكِ، أحميكِ كما يحمي البحر أسرار اللؤلؤ..", b: "أحبكِ للأبد 🤍" }
             ],
 
-            typeWriter(text, elementId, speed = 60) {
+            typeWriter(text, elementId) {
                 this.isTyping = true;
                 let i = 0;
-                const element = document.getElementById(elementId);
-                element.innerHTML = "";
-                
-                function type() {
-                    if (i < text.length) {
-                        element.innerHTML += text.charAt(i);
+                const el = document.getElementById(elementId);
+                el.innerHTML = "";
+                const timer = setInterval(() => {
+                    if(i < text.length) {
+                        el.innerHTML += text.charAt(i);
                         i++;
-                        setTimeout(type, speed);
                     } else {
-                        app.isTyping = false;
+                        clearInterval(timer);
+                        this.isTyping = false;
                     }
-                }
-                type();
+                }, 50);
             },
+
+            init() { this.next(); },
 
             next() {
                 if(this.isTyping) return;
-                if(this.step >= this.data.length) {
-                    gsap.to("#main-ui", { opacity: 0, scale: 0.8, duration: 1 });
-                    return;
-                }
+                startMedia();
+
+                if(this.step >= this.data.length) return;
 
                 const current = this.data[this.step];
                 const dateEl = document.getElementById('date-box');
                 const btnEl = document.getElementById('next-btn');
-
-                if(audio.paused && this.step === 0) { audio.play(); playBtn.innerText = "⏸"; }
 
                 gsap.to(dateEl, { opacity: 0, duration: 0.3 });
                 this.typeWriter(current.t, "msg");
@@ -245,17 +236,14 @@
                 setTimeout(() => {
                     if(current.d) {
                         dateEl.innerHTML = `<div class="date-shimmer">${current.d}</div>`;
-                        gsap.to(dateEl, { opacity: 1, y: 0, duration: 0.6 });
+                        gsap.to(dateEl, { opacity: 1, duration: 0.8 });
                     }
                     btnEl.innerText = current.b;
-                }, 500);
+                }, 600);
 
                 this.step++;
             }
         };
-
-        window.onload = () => app.next();
     </script>
 </body>
 </html>
-
