@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Swan Pearl Legend | أسطورة البجعة واللؤلؤ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&family=Dancing+Script:wght@700&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <style>
+    /* ═══════════════════════════════════════
+       RESET & ROOT VARIABLES
+    ═══════════════════════════════════════ */
+    *, *::before, *::after {
+      margin: 0; padding: 0;
+      box-sizing: border-box;
+      cursor: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --accent:      #a2d2ff;
+      --glow:        rgba(162,210,255,0.6);
+      --bg-deep:     #020617;
+      --bg-mid:      #0f172a;
+      --glass:       rgba(255,255,255,0.03);
+      --text-dark:   #0a0f1d;
+      --font-main:   'Tajawal', sans-serif;
+      --font-fancy:  'Dancing Script', cursive;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      background: radial-gradient(circle at center, var(--bg-mid) 0%, var(--bg-deep) 100%);
+      font-family: var(--font-main);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+    }
+
+    /* ═══════════════════════════════════════
+       MAGIC CURSOR
+    ═══════════════════════════════════════ */
+    #cursor-dot {
+      position: fixed;
+      width: 28px; height: 28px;
+      background: white;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      mix-blend-mode: difference;
+      box-shadow: 0 0 20px white, 0 0 40px rgba(162,210,255,0.8);
+      transform: translate(-50%, -50%);
+      transition: transform 0.08s;
+    }
+
+    #cursor-ring {
+      position: fixed;
+      width: 50px; height: 50px;
+      border: 1.5px solid rgba(162,210,255,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: left 0.12s ease, top 0.12s ease;
+    }
+
+    /* ═══════════════════════════════════════
+       STAR FIELD
+    ═══════════════════════════════════════ */
+    #starfield {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      animation: starBlink var(--dur) var(--delay) ease-in-out infinite;
+    }
+
+    @keyframes starBlink {
+      0%, 100% { opacity: 0.1; transform: scale(1); }
+      50%       { opacity: 0.9; transform: scale(1.4); }
+    }
+
+    /* ═══════════════════════════════════════
+       BUBBLES
+    ═══════════════════════════════════════ */
+    #bubbles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(162,210,255,0.35);
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18), transparent);
+      animation: bubbleRise var(--dur) var(--delay) linear infinite;
+    }
+
+    @keyframes bubbleRise {
+      0%   { transform: translateY(0) translateX(0);   opacity: 0; }
+      10%  { opacity: var(--op); }
+      90%  { opacity: var(--op); }
+      100% { transform: translateY(-110vh) translateX(var(--drift)); opacity: 0; }
+    }
+
+    /* ═══════════════════════════════════════
+       FLOATING HEARTS
+    ═══════════════════════════════════════ */
+    #hearts-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .fheart {
+      position: absolute;
+      animation: heartFloat var(--dur) var(--delay) linear infinite;
+      filter: drop-shadow(0 0 6px var(--col));
+      color: var(--col);
+      font-style: normal;
+    }
+
+    @keyframes heartFloat {
+      0%   { transform: translateY(0) rotate(0deg);   opacity: 0; }
+      10%  { opacity: 0.8; }
+      90%  { opacity: 0.8; }
+      100% { transform: translateY(-110vh) rotate(20deg); opacity: 0; }
+    }
+
+    /* ═══════════════════════════════════════
+       EMOJI RAIN
+    ═══════════════════════════════════════ */
+    #emoji-rain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .erain {
+      position: absolute;
+      top: -40px;
+      animation: rainFall var(--dur) var(--delay) linear infinite;
+      filter: drop-shadow(0 0 4px rgba(255,255,255,0.3));
+    }
+
+    @keyframes rainFall {
+      0%   { transform: translateY(0);       opacity: 0; }
+      10%  { opacity: 0.7; }
+      90%  { opacity: 0.7; }
+      100% { transform: translateY(110vh);   opacity: 0; }
+    }
+
+    /* ═══════════════════════════════════════
+       MUSICAL NOTES
+    ═══════════════════════════════════════ */
+    #notes-layer {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .mnote {
+      position: absolute;
+      color: rgba(255,255,255,0.28);
+      animation: noteFloat var(--dur) var(--delay) ease-in-out infinite;
+      font-size: var(--sz);
+    }
+
+    @keyframes noteFloat {
+      0%, 100% { transform: translateY(0)   rotate(0deg);  opacity: 0.15; }
+      50%       { transform: translateY(-28px) rotate(12deg); opacity: 0.45; }
+    }
+
+    /* ═══════════════════════════════════════
+       PARTICLE SPRAY (cursor trail)
+    ═══════════════════════════════════════ */
+    .spray-particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 100;
+      font-size: 20px;
+      filter: drop-shadow(0 0 4px rgba(255,255,255,0.6));
+    }
+
+    /* ═══════════════════════════════════════
+       MAIN CARD
+    ═══════════════════════════════════════ */
+    #main-card {
+      position: relative;
+      width: min(460px, 92vw);
+      background: var(--glass);
+      backdrop-filter: blur(40px);
+      -webkit-backdrop-filter: blur(40px);
+      border-radius: 120px 120px 50px 50px;
+      border: 1px solid rgba(255,255,255,0.14);
+      padding: clamp(20px,4vw,38px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 10;
+      box-shadow: 0 50px 150px rgba(0,0,0,0.85), inset 0 0 40px rgba(255,255,255,0.04);
+      animation: cardFloat 6s ease-in-out infinite;
+    }
+
+    @keyframes cardFloat {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-14px); }
+    }
+
+    /* Neon border pulse */
+    #main-card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      background: transparent;
+      border: 1px solid var(--accent);
+      animation: neonPulse 2.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes neonPulse {
+      0%,100% { box-shadow: 0 0 10px rgba(162,210,255,0.3), inset 0 0 10px rgba(162,210,255,0.05); }
+      50%      { box-shadow: 0 0 50px rgba(162,210,255,0.7), inset 0 0 20px rgba(162,210,255,0.15); }
+    }
+
+    /* ═══════════════════════════════════════
+       EMOJI BADGE (top of card)
+    ═══════════════════════════════════════ */
+    #card-badge {
+      position: absolute;
+      top: -32px;
+      width: 62px; height: 62px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px;
+      background: radial-gradient(circle, rgba(162,210,255,0.25), rgba(0,0,0,0.5));
+      border: 2px solid rgba(162,210,255,0.5);
+      box-shadow: 0 0 22px rgba(162,210,255,0.6);
+      animation: badgeBob 4s ease-in-out infinite;
+    }
+
+    @keyframes badgeBob {
+      0%,100% { transform: translateY(0) rotate(0deg); }
+      25%      { transform: translateY(-6px) rotate(8deg); }
+      75%      { transform: translateY(-3px) rotate(-8deg); }
+    }
+
+    /* ═══════════════════════════════════════
+       THEATRE (image area)
+    ═══════════════════════════════════════ */
+    #theatre {
+      width: 100%;
+      height: clamp(190px, 44vh, 350px);
+      border-radius: 90px 90px 22px 22px;
+      overflow: hidden;
+      position: relative;
+      border: 2px solid rgba(162,210,255,0.5);
+      box-shadow: 0 0 55px rgba(162,210,255,0.5);
+      margin-bottom: 22px;
+      margin-top: 10px;
+    }
+
+    #theatre-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 30%, rgba(162,210,255,0.18), transparent 60%),
+                  radial-gradient(circle at 70% 70%, rgba(162,210,255,0.12), #000);
+      animation: theatreBg 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes theatreBg {
+      0%   { background: radial-gradient(circle at 30% 30%, rgba(162,210,255,0.2), transparent 60%), radial-gradient(circle at 70% 70%, rgba(162,210,255,0.15), #000); }
+      100% { background: radial-gradient(circle at 70% 30%, rgba(162,210,255,0.3), transparent 60%), radial-gradient(circle at 30% 70%, rgba(162,210,255,0.2), #000); }
+    }
+
+    /* Central symbol */
+    #centre-symbol {
+      position: absolute;
+      inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .orbit-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(162,210,255,0.4);
+      background: radial-gradient(circle, rgba(162,210,255,0.12), transparent);
+    }
+
+    #ring1 { width: 160px; height: 160px; animation: ringPulse 3s ease-in-out infinite; }
+    #ring2 { width: 116px; height: 116px; animation: ringPulse 2.5s ease-in-out infinite 0.5s; }
+
+    @keyframes ringPulse {
+      0%,100% { transform: scale(1);   opacity: 0.5; }
+      50%      { transform: scale(1.2); opacity: 1; }
+    }
+
+    #main-emoji {
+      font-size: 68px;
+      filter: drop-shadow(0 0 22px rgba(162,210,255,0.8));
+      animation: symbolFloat 5s ease-in-out infinite;
+      position: relative; z-index: 2;
+    }
+
+    @keyframes symbolFloat {
+      0%,100% { transform: translateY(0)   rotate(0deg); }
+      25%      { transform: translateY(-18px) rotate(4deg); }
+      75%      { transform: translateY(-10px) rotate(-4deg); }
+    }
+
+    /* Orbiting particles */
+    .orbit-particle {
+      position: absolute;
+      font-size: 18px;
+      filter: drop-shadow(0 0 8px rgba(162,210,255,0.7));
+      animation: orbitSpin var(--period) linear infinite;
+      transform-origin: center;
+    }
+
+    @keyframes orbitSpin {
+      0%   { transform: rotate(var(--start)) translateX(80px) rotate(calc(-1 * var(--start))); }
+      100% { transform: rotate(calc(var(--start) + 360deg)) translateX(80px) rotate(calc(-1 * (var(--start) + 360deg))); }
+    }
+
+    /* Corner sparkles */
+    .corner-spark {
+      position: absolute;
+      font-size: 18px;
+      animation: sparkGlow 2s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px rgba(162,210,255,0.8));
+    }
+
+    @keyframes sparkGlow {
+      0%,100% { opacity: 0.2; transform: scale(0.8); }
+      50%      { opacity: 1;   transform: scale(1.3); }
+    }
+
+    /* Pearl orbs */
+    .pearl-orb {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, white, rgba(162,210,255,0.6));
+      box-shadow: 0 0 20px rgba(162,210,255,0.6);
+      animation: orbPulse var(--dur) var(--delay) ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes orbPulse {
+      0%,100% { transform: scale(1)   translateY(0);    opacity: 0.35; }
+      50%      { transform: scale(1.5) translateY(-10px); opacity: 0.7; }
+    }
+
+    /* Wave */
+    #wave-svg {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      opacity: 0.28;
+      animation: waveDrift 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes waveDrift {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-38px); }
+    }
+
+    /* Swan decoration */
+    #swan-deco {
+      position: absolute;
+      top: 10px; right: 14px;
+      opacity: 0.18;
+      pointer-events: none;
+      animation: swanDrift 5s ease-in-out infinite;
+    }
+
+    @keyframes swanDrift {
+      0%,100% { transform: translateY(0) rotate(0deg);  opacity: 0.15; }
+      50%      { transform: translateY(-8px) rotate(3deg); opacity: 0.3; }
+    }
+
+    /* ═══════════════════════════════════════
+       TEXT AREA
+    ═══════════════════════════════════════ */
+    #text-area {
+      text-align: center;
+      width: 100%;
+      padding: 0 6px;
+      min-height: 90px;
+    }
+
+    #main-msg {
+      font-size: clamp(1rem, 3.5vw, 1.3rem);
+      font-weight: 800;
+      line-height: 1.75;
+      color: var(--accent);
+      text-shadow: 0 0 15px var(--glow);
+    }
+
+    #sub-msg {
+      font-size: clamp(0.85rem, 2.8vw, 1rem);
+      color: rgba(255,255,255,0.65);
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    #date-box {
+      margin-top: 14px;
+    }
+
+    .date-shimmer {
+      font-family: var(--font-fancy);
+      font-size: clamp(2rem, 8vw, 3.5rem);
+      background: linear-gradient(90deg, #fff 0%, #a2d2ff 50%, #fff 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 12px rgba(162,210,255,0.8));
+      animation: shimmerMove 3s linear infinite;
+    }
+
+    @keyframes shimmerMove {
+      0%   { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .date-sub {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.4);
+      margin-top: 4px;
+    }
+
+    /* ═══════════════════════════════════════
+       PROGRESS DOTS
+    ═══════════════════════════════════════ */
+    #progress-dots {
+      display: flex;
+      gap: 7px;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    .pdot {
+      height: 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.2);
+      transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1), background 0.4s;
+    }
+
+    .pdot.active {
+      background: white;
+      box-shadow: 0 0 8px white;
+      width: 20px !important;
+    }
+
+    /* ═══════════════════════════════════════
+       PEARL BUTTON
+    ═══════════════════════════════════════ */
+    #pearl-btn {
+      position: relative;
+      overflow: hidden;
+      padding: 18px clamp(32px,8vw,60px);
+      border-radius: 60px;
+      background: linear-gradient(135deg, #ffffff 0%, rgba(162,210,255,0.2) 100%);
+      color: var(--text-dark);
+      font-family: var(--font-main);
+      font-weight: 900;
+      font-size: clamp(1rem, 3.5vw, 1.25rem);
+      border: 1px solid rgba(162,210,255,0.4);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 28px rgba(162,210,255,0.5);
+      margin-top: 18px;
+      transition: transform 0.2s, box-shadow 0.3s;
+      cursor: none;
+    }
+
+    #pearl-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(162,210,255,0.4), transparent);
+      transform: translateX(-100%);
+      animation: btnShine 2.2s linear infinite;
+    }
+
+    @keyframes btnShine {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(200%); }
+    }
+
+    #pearl-btn:active { transform: scale(0.93); }
+
+    /* Ripple */
+    .btn-ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(162,210,255,0.5);
+      transform: scale(0);
+      animation: rippleAnim 0.8s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes rippleAnim {
+      to { transform: scale(4); opacity: 0; }
+    }
+
+    /* ═══════════════════════════════════════
+       TAGLINE
+    ═══════════════════════════════════════ */
+    #tagline {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 2px;
+      margin-top: 12px;
+      animation: taglinePulse 3s ease-in-out infinite;
+    }
+
+    @keyframes taglinePulse {
+      0%,100% { opacity: 0.2; }
+      50%      { opacity: 0.5; }
+    }
+
+    /* ═══════════════════════════════════════
+       FINALE SCREEN
+    ═══════════════════════════════════════ */
+    #finale {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #1a0030 0%, #000 100%);
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 30px;
+    }
+
+    #finale.show { display: flex; }
+
+    #finale-swan {
+      font-size: 80px;
+      animation: swanBounce 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(255,214,255,0.8));
+    }
+
+    @keyframes swanBounce {
+      0%,100% { transform: scale(1) rotate(0deg); }
+      25%      { transform: scale(1.2) rotate(5deg); }
+      75%      { transform: scale(1.1) rotate(-5deg); }
+    }
+
+    #finale-title {
+      font-size: clamp(2rem, 8vw, 4rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffd6ff, #a2d2ff, #caffbf);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 20px rgba(255,214,255,0.8));
+      margin-top: 20px;
+      margin-bottom: 14px;
+    }
+
+    #finale-sub {
+      font-size: clamp(1rem, 3.5vw, 1.3rem);
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 8px;
+    }
+
+    #finale-sub2 {
+      font-size: clamp(0.85rem, 3vw, 1.1rem);
+      color: rgba(255,255,255,0.4);
+      margin-bottom: 36px;
+    }
+
+    #replay-btn {
+      padding: 16px 48px;
+      border-radius: 50px;
+      background: linear-gradient(135deg, #fff, rgba(162,210,255,0.25));
+      color: var(--text-dark);
+      font-family: var(--font-main);
+      font-weight: 900;
+      font-size: 1.1rem;
+      border: none;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      cursor: none;
+      transition: transform 0.2s;
+    }
+
+    #replay-btn:active { transform: scale(0.93); }
+
+    .finale-bottom-row {
+      position: fixed;
+      bottom: 16px;
+      left: 0; width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .finale-bottom-row span {
+      font-size: 1.5rem;
+      animation: bottomBob var(--dur) var(--delay) ease-in-out infinite;
+    }
+
+    @keyframes bottomBob {
+      0%,100% { transform: translateY(0);   opacity: 0.4; }
+      50%      { transform: translateY(-12px); opacity: 1; }
+    }
+
+    /* firework dots */
+    .fw-dot {
+      position: fixed;
+      font-size: var(--sz);
+      pointer-events: none;
+      animation: fwBurst var(--dur) var(--delay) ease-out infinite;
+    }
+
+    @keyframes fwBurst {
+      0%    { transform: scale(0) rotate(0deg);   opacity: 0; }
+      15%   { opacity: 1; }
+      60%   { transform: scale(1.5) rotate(180deg); opacity: 0.8; }
+      100%  { transform: scale(0) rotate(360deg); opacity: 0; }
+    }
+
+    /* ═══════════════════════════════════════
+       RESPONSIVE TWEAKS
+    ═══════════════════════════════════════ */
+    @media (max-height: 700px) {
+      #theatre { height: 38vh; }
+    }
+
+    @media (max-width: 380px) {
+      #main-card { padding: 18px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ──────────────────────────────────────
+     CURSOR
+────────────────────────────────────── -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- ──────────────────────────────────────
+     BACKGROUND LAYERS
+────────────────────────────────────── -->
+<div id="starfield"></div>
+<div id="bubbles"></div>
+<div id="hearts-layer"></div>
+<div id="emoji-rain"></div>
+<div id="notes-layer"></div>
+
+<!-- ──────────────────────────────────────
+     MAIN CARD
+────────────────────────────────────── -->
+<div id="main-card">
+
+  <!-- Badge -->
+  <div id="card-badge">🦢</div>
+
+  <!-- Swan deco SVG -->
+  <div id="swan-deco">
+    <svg width="72" height="56" viewBox="0 0 100 78" fill="none">
+      <path d="M50 70 C20 70 5 55 5 40 C5 25 20 15 35 20 C40 10 55 5 65 15 C75 10 90 15 90 30 C90 50 75 65 50 70Z" fill="white" opacity="0.9"/>
+      <path d="M50 25 C45 15 35 10 25 15 C15 20 10 35 20 45" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="22" cy="18" rx="3" ry="2" fill="white"/>
+      <path d="M19 17 L16 15" stroke="orange" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- Theatre -->
+  <div id="theatre">
+    <div id="theatre-bg"></div>
+
+    <!-- Pearl orbs -->
+    <div id="pearl-orbs"></div>
+
+    <!-- Centre symbol -->
+    <div id="centre-symbol">
+      <div class="orbit-ring" id="ring1"></div>
+      <div class="orbit-ring" id="ring2"></div>
+      <span id="main-emoji">🦢</span>
+      <span class="orbit-particle" id="op0" style="--start:0deg;   --period:7s">✨</span>
+      <span class="orbit-particle" id="op1" style="--start:90deg;  --period:8s">🤍</span>
+      <span class="orbit-particle" id="op2" style="--start:180deg; --period:9s">🫧</span>
+      <span class="orbit-particle" id="op3" style="--start:270deg; --period:7.5s">💎</span>
+    </div>
+
+    <!-- Corner sparkles -->
+    <span class="corner-spark" style="top:10%;right:10%;animation-delay:0s">✨</span>
+    <span class="corner-spark" style="bottom:10%;left:10%;animation-delay:0.6s">✨</span>
+    <span class="corner-spark" style="top:14%;left:14%;animation-delay:1.1s">✨</span>
+    <span class="corner-spark" style="bottom:14%;right:14%;animation-delay:1.6s">✨</span>
+
+    <!-- Wave SVG -->
+    <svg id="wave-svg" viewBox="0 0 420 44" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 22 Q52 5 104 22 Q156 38 208 22 Q260 5 312 22 Q364 38 420 22 L420 44 L0 44Z" fill="#a2d2ff"/>
+    </svg>
+  </div>
+
+  <!-- Text area -->
+  <div id="text-area">
+    <div id="main-msg">أهلاً يا لؤلؤتي المضيئة..</div>
+    <div id="sub-msg">مستعدة للإبحار في عالمي؟</div>
+    <div id="date-box"></div>
+  </div>
+
+  <!-- Progress dots -->
+  <div id="progress-dots"></div>
+
+  <!-- Button -->
+  <button id="pearl-btn" onclick="App.next(this, event)">دخول إلى القلب 🤍</button>
+
+  <!-- Tagline -->
+  <p id="tagline">🦢 The Swan Pearl Legend 🦢</p>
+</div>
+
+<!-- ──────────────────────────────────────
+     FINALE
+────────────────────────────────────── -->
+<div id="finale">
+  <span id="finale-swan">🦢</span>
+  <h1 id="finale-title">أحبكِ للأبد 🤍</h1>
+  <p id="finale-sub">أنتِ أجمل فصل في حكايتي</p>
+  <p id="finale-sub2">يا بجعتي البيضاء .. يا لؤلؤتي النادرة</p>
+  <button id="replay-btn" onclick="App.replay()">إعادة الرحلة 🔄</button>
+  <div class="finale-bottom-row" id="finale-bottom">
+    <span style="--dur:2s;--delay:0s">🦢</span>
+    <span style="--dur:2s;--delay:0.2s">🤍</span>
+    <span style="--dur:2s;--delay:0.4s">💎</span>
+    <span style="--dur:2s;--delay:0.6s">🌙</span>
+    <span style="--dur:2s;--delay:0.8s">✨</span>
+    <span style="--dur:2s;--delay:1s">💎</span>
+    <span style="--dur:2s;--delay:1.2s">🤍</span>
+    <span style="--dur:2s;--delay:1.4s">🦢</span>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   DATA: STORY STEPS
+═══════════════════════════════════════════════════ */
+const STEPS = [
+  {
+    text:    "في عتمة هذه الحياة..",
+    sub:     "كنتِ أنتِ الضوء الهادئ كالبجعة",
+    btn:     "أكمل القصة.. 🌊",
+    accent:  "#bde0fe",
+    glow:    "rgba(189,224,254,0.6)",
+    emoji:   "🌊",
+    rain:    ["🌊","🦢","💙","🌙","⭐"],
+  },
+  {
+    text:    "رقيقة جداً..",
+    sub:     "لكنكِ قوية في قلبي كأمواج البحر الأزرق",
+    btn:     "وماذا بعد؟ 💫",
+    accent:  "#cdb4db",
+    glow:    "rgba(205,180,219,0.6)",
+    emoji:   "💜",
+    rain:    ["💜","🌸","✨","🦋","💎"],
+  },
+  {
+    text:    "تذكرين هذا التاريخ؟",
+    sub:     "اليوم الذي أضاء فيه كوني لأول مرة..",
+    date:    "2025 / 6 / 11",
+    btn:     "أجمل أيامي ❤️",
+    accent:  "#ffb3c6",
+    glow:    "rgba(255,179,198,0.6)",
+    emoji:   "❤️",
+    rain:    ["❤️","🌹","💕","🥰","✨"],
+  },
+  {
+    text:    "سأبقى دائماً بجانبكِ..",
+    sub:     "أحميكِ مثلما يحمي البحر أسرار اللؤلؤ",
+    btn:     "إلى الأبد؟ 🌌",
+    accent:  "#caffbf",
+    glow:    "rgba(202,255,191,0.6)",
+    emoji:   "🌟",
+    rain:    ["🌿","💚","🫧","🌟","🍃"],
+  },
+  {
+    text:    "نعم، إلى الأبد..",
+    sub:     "يا بجعتي الجميلة يا أغلى من كل لؤلؤ",
+    btn:     "أحبكِ كثيراً 💗",
+    accent:  "#ffd6ff",
+    glow:    "rgba(255,214,255,0.6)",
+    emoji:   "👑",
+    rain:    ["💗","🦢","🌸","👑","✨"],
+  },
+];
+
+const HEART_COLORS = ["#ff6b9d","#ff8fab","#ffb3c6","#ffc8dd","#ff006e","#f72585","#ff85a1","#fb5607"];
+const NOTES        = ["♪","♫","♩","♬","♭"];
+
+/* ═══════════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════════ */
+function rnd(min, max) { return Math.random() * (max - min) + min; }
+function rndInt(min, max) { return Math.floor(rnd(min, max + 1)); }
+function pick(arr) { return arr[rndInt(0, arr.length - 1)]; }
+
+/* ═══════════════════════════════════════════════════
+   CURSOR
+═══════════════════════════════════════════════════ */
+const dot  = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+
+document.addEventListener('mousemove', (e) => {
+  gsap.to(dot,  { x: e.clientX, y: e.clientY, duration: 0.08, overwrite: true });
+  gsap.to(ring, { x: e.clientX, y: e.clientY, duration: 0.18, overwrite: true });
+  if (Math.random() > 0.91) spawnSpray(e.clientX, e.clientY);
+});
+
+document.addEventListener('touchmove', (e) => {
+  const t = e.touches[0];
+  dot.style.left  = t.clientX + 'px';
+  dot.style.top   = t.clientY + 'px';
+  ring.style.left = t.clientX + 'px';
+  ring.style.top  = t.clientY + 'px';
+}, { passive: true });
+
+/* ═══════════════════════════════════════════════════
+   SPRAY PARTICLES
+═══════════════════════════════════════════════════ */
+function spawnSpray(x, y, emojis) {
+  const set = emojis || App.currentRain();
+  const el = document.createElement('div');
+  el.className = 'spray-particle';
+  el.textContent = pick(set);
+  el.style.left = x + 'px';
+  el.style.top  = y + 'px';
+  document.body.appendChild(el);
+  anime({
+    targets: el,
+    translateX: rnd(-160, 160),
+    translateY: rnd(-200, 60),
+    rotate:     rnd(0, 720),
+    scale:      [1, rnd(1.5, 2.5)],
+    opacity:    [1, 0],
+    duration:   2600,
+    easing:     'easeOutExpo',
+    complete:   () => el.remove(),
+  });
+}
+
+/* ═══════════════════════════════════════════════════
+   STAR FIELD
+═══════════════════════════════════════════════════ */
+(function buildStars() {
+  const sf = document.getElementById('starfield');
+  for (let i = 0; i < 130; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = rnd(1, 3.2);
+    s.style.cssText = `
+      left:${rnd(0,100)}%; top:${rnd(0,100)}%;
+      width:${sz}px; height:${sz}px;
+      --dur:${rnd(2,5.5)}s; --delay:${rnd(0,4)}s;
+    `;
+    sf.appendChild(s);
+  }
+})();
+
+/* ═══════════════════════════════════════════════════
+   BUBBLES
+═══════════════════════════════════════════════════ */
+(function buildBubbles() {
+  const bl = document.getElementById('bubbles');
+  for (let i = 0; i < 20; i++) {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const sz = rnd(8, 32);
+    b.style.cssText = `
+      left:${rnd(3,95)}%; bottom:-40px;
+      width:${sz}px; height:${sz}px;
+      --dur:${rnd(6,15)}s; --delay:${rnd(0,9)}s;
+      --op:${rnd(0.1,0.42)}; --drift:${rnd(-40,40)}px;
+    `;
+    bl.appendChild(b);
+  }
+})();
+
+/* ═══════════════════════════════════════════════════
+   FLOATING HEARTS
+═══════════════════════════════════════════════════ */
+(function buildHearts() {
+  const hl = document.getElementById('hearts-layer');
+  for (let i = 0; i < 22; i++) {
+    const h = document.createElement('i');
+    h.className = 'fheart';
+    h.textContent = '♥';
+    const col = pick(HEART_COLORS);
+    h.style.cssText = `
+      left:${rnd(3,96)}%; bottom:-30px;
+      font-size:${rnd(12,28)}px;
+      --col:${col}; --dur:${rnd(8,18)}s; --delay:${rnd(0,11)}s;
+    `;
+    hl.appendChild(h);
+  }
+})();
+
+/* ═══════════════════════════════════════════════════
+   MUSICAL NOTES
+═══════════════════════════════════════════════════ */
+(function buildNotes() {
+  const nl = document.getElementById('notes-layer');
+  for (let i = 0; i < 10; i++) {
+    const n = document.createElement('span');
+    n.className = 'mnote';
+    n.textContent = NOTES[i % NOTES.length];
+    n.style.cssText = `
+      left:${rnd(4,94)}%; top:${rnd(4,28)}%;
+      --sz:${rnd(14,24)}px; --dur:${rnd(3,6.5)}s; --delay:${rnd(0,5)}s;
+    `;
+    nl.appendChild(n);
+  }
+})();
+
+/* ═══════════════════════════════════════════════════
+   PEARL ORBS (inside theatre)
+═══════════════════════════════════════════════════ */
+(function buildOrbs() {
+  const container = document.getElementById('pearl-orbs');
+  for (let i = 0; i < 6; i++) {
+    const o = document.createElement('div');
+    o.className = 'pearl-orb';
+    const sz = rnd(6, 14);
+    o.style.cssText = `
+      width:${sz}px; height:${sz}px;
+      left:${rnd(8,90)}%; top:${rnd(8,90)}%;
+      --dur:${rnd(3,7)}s; --delay:${rnd(0,3.5)}s;
+    `;
+    container.appendChild(o);
+  }
+})();
+
+/* ═══════════════════════════════════════════════════
+   EMOJI RAIN (controlled by App)
+═══════════════════════════════════════════════════ */
+let rainDrops = [];
+function buildRain(emojis) {
+  const rl = document.getElementById('emoji-rain');
+  rainDrops.forEach(d => d.remove());
+  rainDrops = [];
+  for (let i = 0; i < 16; i++) {
+    const d = document.createElement('span');
+    d.className = 'erain';
+    d.textContent = emojis[i % emojis.length];
+    d.style.cssText = `
+      left:${rnd(1,97)}%;
+      font-size:${rnd(14,24)}px;
+      --dur:${rnd(5,13)}s; --delay:${rnd(0,9)}s;
+    `;
+    rl.appendChild(d);
+    rainDrops.push(d);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   PROGRESS DOTS
+═══════════════════════════════════════════════════ */
+function buildDots(total, current) {
+  const pd = document.getElementById('progress-dots');
+  pd.innerHTML = '';
+  for (let i = 0; i <= total; i++) {
+    const d = document.createElement('div');
+    d.className = 'pdot' + (i <= current ? ' active' : '');
+    d.style.width = (i === current ? '20px' : '8px');
+    pd.appendChild(d);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   ACCENT THEMING (update CSS vars & elements)
+═══════════════════════════════════════════════════ */
+function applyAccent(accent, glow) {
+  document.documentElement.style.setProperty('--accent', accent);
+  document.documentElement.style.setProperty('--glow', glow);
+
+  // Theatre border & shadow
+  const theatre = document.getElementById('theatre');
+  theatre.style.borderColor = accent + '80';
+  theatre.style.boxShadow   = `0 0 55px ${glow}`;
+
+  // Neon ring colour
+  const card = document.getElementById('main-card');
+  card.style.setProperty('--accent', accent);
+
+  // Main emoji glow
+  document.getElementById('main-emoji').style.filter =
+    `drop-shadow(0 0 22px ${glow})`;
+
+  // Orbit particles glow
+  ['op0','op1','op2','op3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.filter = `drop-shadow(0 0 8px ${accent})`;
+  });
+
+  // Corner sparks glow
+  document.querySelectorAll('.corner-spark').forEach(el => {
+    el.style.filter = `drop-shadow(0 0 6px ${glow})`;
+  });
+
+  // Wave SVG fill
+  const wavePath = document.querySelector('#wave-svg path');
+  if (wavePath) wavePath.setAttribute('fill', accent);
+
+  // Pearl button shadow
+  document.getElementById('pearl-btn').style.boxShadow =
+    `0 20px 60px rgba(0,0,0,0.6), 0 0 28px ${accent}80`;
+}
+
+/* ═══════════════════════════════════════════════════
+   APPLICATION ENGINE
+═══════════════════════════════════════════════════ */
+const App = {
+  step: 0,
+  totalSteps: STEPS.length,
+
+  currentRain() {
+    if (this.step === 0) return ["🦢","✨","🤍","🫧","💎"];
+    return STEPS[this.step - 1]?.rain || ["✨","🤍"];
+  },
+
+  init() {
+    buildDots(this.totalSteps, 0);
+    buildRain(["🦢","✨","🤍","🫧","💎"]);
+    gsap.from('#main-card', { y: 80, opacity: 0, scale: 0.9, duration: 1.2, ease: 'back.out(1.7)' });
+    gsap.from('#main-msg',  { opacity: 0, y: 20, duration: 1.5, delay: 0.5 });
+    gsap.from('#sub-msg',   { opacity: 0, y: 20, duration: 1.5, delay: 0.9 });
+  },
+
+  next(btn, event) {
+    // Ripple
+    const rect = btn.getBoundingClientRect();
+    const rpl  = document.createElement('span');
+    rpl.className = 'btn-ripple';
+    rpl.style.cssText = `
+      width:50px; height:50px;
+      left:${event.clientX - rect.left - 25}px;
+      top:${event.clientY - rect.top  - 25}px;
+    `;
+    btn.appendChild(rpl);
+    setTimeout(() => rpl.remove(), 820);
+
+    // Burst particles
+    for (let i = 0; i < 14; i++) {
+      setTimeout(() => {
+        spawnSpray(
+          window.innerWidth  / 2 + rnd(-130, 130),
+          window.innerHeight / 2 + rnd(-110, 110)
+        );
+      }, i * 55);
+    }
+
+    // Card shake
+    gsap.to('#main-card', {
+      x: [-7, 7, -5, 5, -3, 3, 0],
+      duration: 0.45,
+      ease: 'none',
+    });
+
+    if (this.step >= this.totalSteps) {
+      this.endGame();
+      return;
+    }
+
+    const data = STEPS[this.step];
+
+    // Fade out text
+    gsap.to(['#main-msg','#sub-msg','#date-box'], {
+      opacity: 0, y: -18, duration: 0.42,
+      onComplete: () => {
+        document.getElementById('main-msg').textContent  = data.text;
+        document.getElementById('sub-msg').textContent   = data.sub || '';
+
+        const dateBox = document.getElementById('date-box');
+        if (data.date) {
+          dateBox.innerHTML = `
+            <div class="date-shimmer">${data.date}</div>
+            <p class="date-sub">تاريخ لن يُنسى أبداً</p>
+          `;
+        } else {
+          dateBox.innerHTML = '';
+        }
+
+        // Update button label
+        btn.childNodes.forEach(n => { if (n.nodeType === 3) n.textContent = data.btn; });
+        btn.textContent = data.btn;
+
+        // Update emoji
+        document.getElementById('main-emoji').textContent = data.emoji;
+        document.getElementById('card-badge').textContent = data.emoji;
+        ['op0','op1','op2','op3'].forEach((id, i) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = data.rain[i % data.rain.length];
+        });
+
+        // Apply accent
+        applyAccent(data.accent, data.glow);
+
+        // Rebuild rain
+        buildRain(data.rain);
+
+        // Update progress
+        buildDots(this.totalSteps, this.step + 1);
+
+        // Fade in text
+        gsap.fromTo(
+          ['#main-msg','#sub-msg','#date-box'],
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: 0.75, ease: 'back.out' }
+        );
+
+        // Theatre pop
+        gsap.from('#theatre', { scale: 0.94, duration: 0.5, ease: 'power2.out' });
+      },
+    });
+
+    this.step++;
+  },
+
+  endGame() {
+    gsap.to('#main-card', {
+      y: -1100, opacity: 0, duration: 1.5, ease: 'power4.in',
+      onComplete: () => {
+        document.getElementById('finale').classList.add('show');
+        gsap.from('#finale', { opacity: 0, duration: 2 });
+        this.spawnFireworks();
+      },
+    });
+  },
+
+  spawnFireworks() {
+    const emojis = ["🎆","🎇","✨","💥","🌟","💫","❤️","🤍","💎","🦢","💗","🌸"];
+    const finale = document.getElementById('finale');
+    for (let i = 0; i < 32; i++) {
+      const fw = document.createElement('div');
+      fw.className = 'fw-dot';
+      fw.textContent = pick(emojis);
+      fw.style.cssText = `
+        left:${rnd(5,93)}%; top:${rnd(5,90)}%;
+        --sz:${rnd(22,40)}px; --dur:${rnd(1.5,3)}s; --delay:${rnd(0,4.5)}s;
+      `;
+      finale.appendChild(fw);
+    }
+  },
+
+  replay() {
+    this.step = 0;
+    document.getElementById('finale').classList.remove('show');
+    document.getElementById('main-emoji').textContent  = '🦢';
+    document.getElementById('card-badge').textContent  = '🦢';
+    document.getElementById('main-msg').textContent    = 'أهلاً يا لؤلؤتي المضيئة..';
+    document.getElementById('sub-msg').textContent     = 'مستعدة للإبحار في عالمي؟';
+    document.getElementById('date-box').innerHTML      = '';
+    document.getElementById('pearl-btn').textContent   = 'دخول إلى القلب 🤍';
+    applyAccent('#a2d2ff', 'rgba(162,210,255,0.6)');
+    buildRain(["🦢","✨","🤍","🫧","💎"]);
+    buildDots(this.totalSteps, 0);
+    document.querySelectorAll('.fw-dot').forEach(el => el.remove());
+    gsap.fromTo('#main-card',
+      { y: -800, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.3, ease: 'back.out(1.4)' }
+    );
+  },
+};
+
+/* ═══════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════ */
+window.addEventListener('load', () => App.init());
+
+/* Extra ambient: random spray bursts every few seconds */
+setInterval(() => {
+  const rain = App.currentRain();
+  spawnSpray(rnd(80, window.innerWidth - 80), rnd(80, window.innerHeight - 180), rain);
+}, 2800);
+</script>
+</body>
+</html>
