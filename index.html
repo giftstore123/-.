@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أسطورة البجعة واللؤلؤ | The Swan Pearl</title>
+    <title>The Swan Legend | أسطورة البجعة</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
@@ -12,99 +12,97 @@
     <style>
         :root {
             --p-color: #a2d2ff; 
-            --glow: rgba(162, 210, 255, 0.5);
-            --glass: rgba(255, 255, 255, 0.07);
+            --glow: rgba(162, 210, 255, 0.4);
+            --glass: rgba(255, 255, 255, 0.08);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: crosshair; }
 
         body {
-            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            background: #020617;
+            background-image: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
             color: #fff; font-family: 'Tajawal', sans-serif;
             overflow: hidden; height: 100vh; width: 100vw;
             display: flex; justify-content: center; align-items: center;
             touch-action: none;
         }
 
-        /* حاوية الفيديوهات الجانبية */
-        #side-videos-container {
-            position: fixed; inset: 0; z-index: 1; pointer-events: none;
+        /* حاوية الصور الجانبية المبعثرة حول المركز */
+        #side-elements-container {
+            position: absolute; width: 100%; height: 100%;
+            z-index: 5; pointer-events: none;
         }
 
-        .mini-video {
-            position: absolute; width: 110px; height: 110px;
-            border-radius: 25px; overflow: hidden;
+        .mini-frame {
+            position: absolute; width: 90px; height: 90px;
+            border-radius: 20px; overflow: hidden;
             border: 2px solid var(--p-color);
-            box-shadow: 0 0 20px var(--glow);
-            opacity: 0.6; transform: translateY(0);
+            box-shadow: 0 0 15px var(--glow);
+            opacity: 0.8; will-change: transform;
         }
 
-        /* الحاوية الرئيسية (المربع ذو الحواف الدائرية) */
+        .mini-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* الحاوية الرئيسية */
         .master-shield {
-            position: relative; width: 420px; height: 680px;
+            position: relative; width: 400px; height: 650px;
             background: var(--glass); backdrop-filter: blur(25px);
-            border-radius: 60px; /* حواف دائرية للمربع الكبير */
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,255,255,0.05);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.7);
             display: flex; flex-direction: column; align-items: center;
-            padding: 35px; z-index: 10;
+            padding: 30px; z-index: 10; /* تأكد أن الدرع فوق الصور بقليل أو تحتها حسب الرغبة */
         }
 
-        /* فيديو المركز المربع */
         .swan-theatre {
-            width: 300px; height: 300px; /* شكل مربع تماماً */
-            border-radius: 45px; /* حواف دائرية للمربع */
+            width: 280px; height: 280px;
+            border-radius: 35px;
             overflow: hidden; position: relative;
-            border: 4px solid var(--p-color);
-            box-shadow: 0 0 50px var(--glow);
-            margin-bottom: 25px;
+            border: 3px solid var(--p-color);
+            box-shadow: 0 0 40px var(--glow);
+            margin-bottom: 20px;
         }
-
         .swan-theatre video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* النصوص */
-        .narrative-unit { text-align: center; margin-top: 10px; flex-grow: 1; }
-        
-        .main-message {
-            font-size: 1.3rem; font-weight: 700; color: var(--p-color);
-            line-height: 1.7; text-shadow: 0 0 10px var(--glow);
+        .music-player {
+            width: 100%; background: rgba(255,255,255,0.1);
+            padding: 12px; border-radius: 20px;
+            display: flex; align-items: center; gap: 12px;
+            margin-top: 15px; border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .date-shimmer {
-            font-family: 'Dancing Script', cursive; font-size: 3.2rem;
-            background: linear-gradient(45deg, #fff, var(--p-color), #fff);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 8px var(--glow)); margin-top: 15px;
+        .play-pause-btn {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: #fff; border: none; color: #000;
+            font-size: 18px; cursor: pointer; display: flex;
+            align-items: center; justify-content: center;
         }
 
-        /* زر الدخول */
+        .track-info { flex: 1; font-size: 0.75rem; }
+        .progress-bar {
+            width: 100%; height: 4px; background: rgba(255,255,255,0.2);
+            border-radius: 5px; margin-top: 6px; overflow: hidden;
+        }
+        #progress { width: 0%; height: 100%; background: var(--p-color); }
+
+        .narrative-unit { text-align: center; margin-top: 10px; flex: 1; }
+        .main-message { font-size: 1.1rem; color: var(--p-color); line-height: 1.6; }
+        .date-shimmer { font-family: 'Dancing Script', cursive; font-size: 2.8rem; margin-top: 10px; color: #fff; }
+
         .pearl-btn {
-            padding: 20px 50px; border-radius: 40px;
-            background: #fff; color: #020617; font-weight: 900;
-            border: none; font-size: 1.2rem; transition: 0.3s;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            cursor: pointer; z-index: 100;
+            padding: 18px 45px; border-radius: 30px;
+            background: #fff; color: #000; font-weight: 800;
+            border: none; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-top: 15px;
         }
 
-        .pearl-btn:hover { transform: scale(1.05); background: var(--p-color); }
-
-        /* جزيئات اللمس (البجعة والقلوب) */
-        .touch-particle {
-            position: absolute; pointer-events: none;
-            font-size: 28px; z-index: 9999; filter: drop-shadow(0 0 5px white);
-        }
-
-        /* شاشة النهاية */
-        #finale-screen {
-            position: fixed; inset: 0; background: #000; z-index: 2000;
-            display: none; flex-direction: column; justify-content: center;
-            align-items: center; text-align: center;
-        }
+        .touch-particle { position: absolute; pointer-events: none; font-size: 30px; z-index: 1000; }
     </style>
 </head>
 <body>
 
-    <div id="side-videos-container"></div>
+    <div id="side-elements-container"></div>
 
     <div class="master-shield" id="main-ui">
         <div class="swan-theatre">
@@ -114,124 +112,125 @@
         </div>
 
         <div class="narrative-unit">
-            <div class="main-message" id="msg">مرحباً بكِ في عالمي الصغير..</div>
+            <div class="main-message" id="msg">مرحباً بكِ يا لؤلؤتي..</div>
             <div id="date-box"></div>
         </div>
 
-        <button class="pearl-btn" id="next-btn" onclick="app.next()">ابدئي الرحلة 🤍</button>
-    </div>
+        <div class="music-player">
+            <button class="play-pause-btn" id="playBtn">▶</button>
+            <div class="track-info">
+                <span>الموسيقى الهادئة 🎵</span>
+                <div class="progress-bar"><div id="progress"></div></div>
+            </div>
+        </div>
 
-    <div id="finale-screen">
-        <h1 style="font-size: 4rem; color: var(--p-color);">أحبكِ للأبد 🤍</h1>
-        <p style="opacity: 0.7; margin-top: 20px;">أنتِ أجمل لؤلؤة في هذا البحر</p>
-        <button class="pearl-btn" style="margin-top: 40px;" onclick="location.reload()">إعادة القصة 🔄</button>
+        <button class="pearl-btn" id="next-btn" onclick="app.next()">التالي ✨</button>
     </div>
 
     <audio id="bg-audio" loop><source src="space_song.mp3" type="audio/mpeg"></audio>
 
     <script>
-        // --- 1. إعداد الفيديوهات الـ 5 الجانبية ---
-        const container = document.getElementById('side-videos-container');
+        // 1. توزيع الصور بشكل عشوائي "قريب" من المركز
+        const sideContainer = document.getElementById('side-elements-container');
+        const myImages = ["pic1.jpg", "pic2.jpg", "pic3.jpg", "pic4.jpg", "pic5.jpg"];
+        
+        // المواقع الآن مركزة أكثر حول المنطقة الوسطى (بين 20% و 80%)
         const positions = [
-            { x: 8, y: 15 },  { x: 12, y: 70 }, // جهة اليسار
-            { x: 82, y: 10 }, { x: 78, y: 45 }, { x: 85, y: 80 } // جهة اليمين
+            { x: 22, y: 15 }, // قريب أعلى يسار
+            { x: 18, y: 55 }, // قريب وسط يسار
+            { x: 72, y: 20 }, // قريب أعلى يمين
+            { x: 75, y: 65 }, // قريب وسط يمين
+            { x: 45, y: 82 }  // تحت الصندوق الرئيسي مباشرة
         ];
 
         positions.forEach((pos, i) => {
-            const div = document.createElement('div');
-            div.className = 'mini-video';
-            div.style.left = pos.x + '%';
-            div.style.top = pos.y + '%';
-            div.innerHTML = `<video autoplay muted loop playsinline style="width:100%; height:100%; object-fit:cover;">
-                             <source src="mam.mp4" type="video/mp4"></video>`;
-            container.appendChild(div);
+            const frame = document.createElement('div');
+            frame.className = 'mini-frame';
+            frame.style.left = pos.x + '%';
+            frame.style.top = pos.y + '%';
+            // إضافة دوران عشوائي لتبدو مبعثرة بشكل طبيعي
+            const randomRotation = Math.random() * 30 - 15; // بين -15 و 15 درجة
+            frame.style.transform = `rotate(${randomRotation}deg)`;
 
-            // حركة طفو عشوائية لكل فيديو
+            frame.innerHTML = `<img src="${myImages[i]}" onerror="this.style.display='none'; this.parentNode.style.background='var(--glow)'">`;
+            sideContainer.appendChild(frame);
+
+            // حركة طفو عشوائية ناعمة
             anime({
-                targets: div,
-                translateY: [-15, 15],
-                duration: 2000 + (i * 700),
+                targets: frame,
+                translateY: [-10, 10],
+                rotate: [randomRotation, randomRotation + 5],
+                duration: 3000 + (i * 500),
                 direction: 'alternate',
                 loop: true,
                 easing: 'easeInOutQuad'
             });
         });
 
-        // --- 2. تأثير انفجار الإيموجيات عند اللمس ---
-        function explosion(x, y) {
+        // 2. مشغل الموسيقى
+        const audio = document.getElementById('bg-audio');
+        const playBtn = document.getElementById('playBtn');
+        const progress = document.getElementById('progress');
+
+        playBtn.onclick = () => {
+            if(audio.paused) { audio.play(); playBtn.innerText = "⏸"; }
+            else { audio.pause(); playBtn.innerText = "▶"; }
+        };
+
+        audio.ontimeupdate = () => {
+            const pct = (audio.currentTime / audio.duration) * 100;
+            progress.style.width = pct + "%";
+        };
+
+        // 3. تأثير اللمس (انفجار إيموجيات كثيف)
+        function burst(x, y) {
             const icons = ['🤍', '🦢', '✨', '🫧', '💎'];
             for(let i=0; i<15; i++) {
-                const p = document.createElement('span');
-                p.className = 'touch-particle';
-                p.innerHTML = icons[Math.floor(Math.random() * icons.length)];
-                p.style.left = x + 'px';
-                p.style.top = y + 'px';
-                document.body.appendChild(p);
-
-                const angle = Math.random() * Math.PI * 2;
-                const dist = Math.random() * 200 + 50;
+                const span = document.createElement('span');
+                span.className = 'touch-particle';
+                span.innerHTML = icons[Math.floor(Math.random() * icons.length)];
+                span.style.left = x + 'px';
+                span.style.top = y + 'px';
+                document.body.appendChild(span);
 
                 anime({
-                    targets: p,
-                    translateX: Math.cos(angle) * dist,
-                    translateY: Math.sin(angle) * dist,
-                    rotate: () => anime.random(-360, 360),
+                    targets: span,
+                    translateX: anime.random(-180, 180),
+                    translateY: anime.random(-180, 180),
                     opacity: [1, 0],
                     scale: [0.5, 2],
-                    duration: 1500,
+                    rotate: anime.random(-360, 360),
+                    duration: 1200,
                     easing: 'easeOutExpo',
-                    complete: () => p.remove()
+                    complete: () => span.remove()
                 });
             }
         }
 
-        window.addEventListener('mousedown', (e) => explosion(e.clientX, e.clientY));
-        window.addEventListener('touchstart', (e) => explosion(e.touches[0].clientX, e.touches[0].clientY));
+        window.addEventListener('mousedown', (e) => burst(e.clientX, e.clientY));
+        window.addEventListener('touchstart', (e) => burst(e.touches[0].clientX, e.touches[0].clientY));
 
-        // --- 3. نظام القصة والتحكم ---
+        // 4. محرك النصوص
         const app = {
             step: 0,
             data: [
-                { t: "في عتمة هذه الحياة، كنتِ أنتِ الضوء الهادئ كالبجعة..", b: "أكمل القصة..", d: "" },
-                { t: "رقيقة جداً، لكنكِ قوية في قلبي كأمواج البحر الأزرق..", b: "وماذا بعد؟", d: "" },
-                { t: "تذكرين هذا التاريخ؟ اليوم الذي أضاء فيه كوني لأول مرة..", b: "أجمل أيامي ❤️", d: "2025 / 6 / 11" },
-                { t: "سأبقى دائماً بجانبكِ، أحميكِ مثلما يحمي البحر أسرار اللؤلؤ..", b: "أحبك كثيراً", d: "" }
+                { t: "في عتمة هذه الحياة، كنتِ أنتِ الضوء..", d: "" },
+                { t: "رقيقة كالبجعة، غالية كاللؤلؤ..", d: "" },
+                { t: "تذكرين هذا اليوم؟", d: "2025 / 6 / 11" },
+                { t: "أحبكِ دائماً وأبداً..", d: "" }
             ],
-
             next() {
-                // تشغيل الصوت عند أول ضغطة
-                const audio = document.getElementById('bg-audio');
-                if(audio.paused) audio.play().catch(e => console.log("Audio play blocked"));
-
                 if(this.step >= this.data.length) {
-                    this.end();
+                    gsap.to("#main-ui", { opacity: 0, scale: 0.9, duration: 1 });
                     return;
                 }
-
-                const current = this.data[this.step];
-                const msgEl = document.getElementById('msg');
-                const dateEl = document.getElementById('date-box');
-                const btn = document.getElementById('next-btn');
-
-                gsap.to([msgEl, dateEl], { opacity: 0, y: -20, duration: 0.4, onComplete: () => {
-                    msgEl.innerText = current.t;
-                    dateEl.innerHTML = current.d ? `<div class="date-shimmer">${current.d}</div>` : '';
-                    btn.innerText = current.b;
-                    gsap.to([msgEl, dateEl], { opacity: 1, y: 0, duration: 0.6, ease: "back.out" });
+                const cur = this.data[this.step];
+                gsap.to("#msg, #date-box", { opacity: 0, y: -10, duration: 0.3, onComplete: () => {
+                    document.getElementById('msg').innerText = cur.t;
+                    document.getElementById('date-box').innerHTML = cur.d ? `<div class="date-shimmer">${cur.d}</div>` : '';
+                    gsap.to("#msg, #date-box", { opacity: 1, y: 0, duration: 0.5 });
                 }});
-
                 this.step++;
-            },
-
-            end() {
-                gsap.to("#main-ui", { opacity: 0, scale: 0.5, duration: 1, onComplete: () => {
-                    document.getElementById('main-ui').style.display = 'none';
-                    const final = document.getElementById('finale-screen');
-                    final.style.display = 'flex';
-                    gsap.from(final, { opacity: 0, duration: 2 });
-                    // انفجارات تلقائية في النهاية
-                    setInterval(() => explosion(Math.random()*window.innerWidth, Math.random()*window.innerHeight), 400);
-                }});
             }
         };
     </script>
